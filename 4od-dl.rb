@@ -12,7 +12,7 @@ begin
   serieslinks=doc.search("[@class~='playlists-wide']").search("[@class='yt-uix-tile-link']")
   series=Hash.new
   serieslinks.each do |serieslink|
-    series[serieslink.inner_text.strip]=serieslink.attributes['href']
+    series[serieslink.inner_text.strip.match(/Season ([0-9]*) Episodes/)[1]]=serieslink.attributes['href']#TODO what if there are playlists that we don't get a match for
   end
 rescue
   puts 'Show not found, available shows:'
@@ -33,25 +33,28 @@ begin
   class NoSeries<StandardError; end
   class NoEpisode<StandardError; end#TODO are these the best way to handle this?
   raise NoSeries if ARGV[1].nil?
-  seriesid=ARGV[1].to_i-1#TODO sanitise
-  seriespage=Hpricot(open('http://www.youtube.com'+series.sort[seriesid][1]))#TODO account for missing early series
+  seriesid=ARGV[1]#TODO sanitise
+  seriespage=Hpricot(open('http://www.youtube.com'+series[seriesid]))
   episodelinks=seriespage.search("[@class~='playlist-landing']").search("[@class='yt-uix-tile-link']")
   raise NoEpisode if ARGV[2].nil?
   episodeid=ARGV[2].to_i-1#TODO sanitise
   episodehref=episodelinks[episodeid].attributes['href']
   episodeyid=episodehref.to_s.match(/v=([a-zA-Z0-9\-_]{11})&/)[1]
 rescue
-  series.sort.each do |s|
-    puts s[0]+':'
-#TODO this is a bit dubious, what if we get an exception here?
-    seriespage=Hpricot(open('http://www.youtube.com'+s[1]))
-    episodelinks=seriespage.search("[@class~='playlist-landing']").search("[@class='yt-uix-tile-link']")
-    i=1
-    episodelinks.each do |es|
-      puts '  '+i.to_s+': '+es.inner_text.strip
-      i+=1
+  begin
+    series.sort.each do |s|
+      puts 'Series '+s[0]+':'
+      seriespage=Hpricot(open('http://www.youtube.com'+s[1]))
+      episodelinks=seriespage.search("[@class~='playlist-landing']").search("[@class='yt-uix-tile-link']")
+      i=1
+      episodelinks.each do |es|
+        puts '  '+i.to_s+': '+es.inner_text.strip
+        i+=1
+      end
     end
-  end
+  rescue
+    puts 'Error fetching listings'
+  end  
   Kernel::exit
 end
 
