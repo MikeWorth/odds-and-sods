@@ -1,5 +1,5 @@
 #Written by Mike Worth
-#http://www.mike-worth.com/
+#http://www.mike-worth.com/2012/11/19/a-script-to-download-4od/
 #https://github.com/MikeWorth
 
 require 'hpricot'
@@ -12,7 +12,7 @@ begin
   serieslinks=doc.search("[@class~='playlists-wide']").search("[@class='yt-uix-tile-link']")
   series=Hash.new
   serieslinks.each do |serieslink|
-    series[serieslink.inner_text.strip.match(/Season ([0-9]*) Episodes/)[1]]=serieslink.attributes['href']#TODO what if there are playlists that we don't get a match for
+    series[serieslink.inner_text.strip.match(/Season ([0-9]*) Episodes/)[1]]=serieslink.attributes['href']#TODO what if there are playlists that we don`t get a match for
   end
 rescue
   puts 'Show not found, available shows:'
