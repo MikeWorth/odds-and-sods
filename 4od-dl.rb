@@ -37,8 +37,8 @@ begin
   seriespage=Hpricot(open('http://www.youtube.com'+series[seriesid]))
   episodelinks=seriespage.search("[@class~='playlist-landing']").search("[@class='yt-uix-tile-link']")
   raise NoEpisode if ARGV[2].nil?
-  episodeid=ARGV[2].to_i-1#TODO sanitise
-  episodehref=episodelinks[episodeid].attributes['href']
+  episodeid=ARGV[2].to_i#TODO sanitise
+  episodehref=episodelinks[episodeid-1].attributes['href']
   episodeyid=episodehref.to_s.match(/v=([a-zA-Z0-9\-_]{11})&/)[1]
 rescue
   begin
@@ -59,5 +59,8 @@ rescue
 end
 
 #Now actually download it:
-puts 'Downloading: ' + episodelinks[episodeid].inner_text.strip + ': ' + episodeyid#TODO rename in a standard format?
-system('youtube-dl -t '+episodeyid)
+puts 'Downloading: ' + episodelinks[episodeid-1].inner_text.strip + ': ' + episodeyid
+filename=showid.to_s + '.' + seriesid.to_s + '.' + episodeid.to_s
+system('youtube-dl -o ' + filename + '.flv.tmp http://www.youtube.com/watch?v=' +episodeyid)#give the full youtube path in case yid starts with a -
+system('avconv -i ' + filename + '.flv.tmp  -acodec copy -b 1024k ' + filename + '.avi')
+File.delete(filename + '.flv.tmp')
