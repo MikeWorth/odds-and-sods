@@ -1,7 +1,7 @@
 #Written by Mike Worth
 #http://www.mike-worth.com/2012/11/19/a-script-to-download-4od/
 #https://github.com/MikeWorth
-
+require 'rubygems'
 require 'hpricot'
 require 'open-uri'
 
