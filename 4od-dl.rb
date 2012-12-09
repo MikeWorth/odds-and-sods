@@ -9,7 +9,7 @@ require 'open-uri'
 begin
   showid=ARGV.first#TODO sanitise
   doc = Hpricot(open('http://www.youtube.com/show/'+showid))
-  serieslinks=doc.search("[@class~='playlists-wide']").search("[@class='yt-uix-tile-link']")
+  serieslinks=doc.search("[@class~='playlists-wide']").search("[@class~='yt-uix-tile-link']")
   series=Hash.new
   serieslinks.each do |serieslink|
     series[serieslink.inner_text.strip.match(/Season ([0-9]*) Episodes/)[1]]=serieslink.attributes['href']#TODO what if there are playlists that we don`t get a match for
@@ -35,7 +35,7 @@ begin
   raise NoSeries if ARGV[1].nil?
   seriesid=ARGV[1]#TODO sanitise
   seriespage=Hpricot(open('http://www.youtube.com'+series[seriesid]))
-  episodelinks=seriespage.search("[@class~='playlist-landing']").search("[@class='yt-uix-tile-link']")
+  episodelinks=seriespage.search("[@class~='playlist-landing']").search("[@class~='yt-uix-tile-link']")
   raise NoEpisode if ARGV[2].nil?
   episodeid=ARGV[2].to_i#TODO sanitise
   episodehref=episodelinks[episodeid-1].attributes['href']
@@ -45,7 +45,7 @@ rescue
     series.sort.each do |s|
       puts 'Series '+s[0]+':'
       seriespage=Hpricot(open('http://www.youtube.com'+s[1]))
-      episodelinks=seriespage.search("[@class~='playlist-landing']").search("[@class='yt-uix-tile-link']")
+      episodelinks=seriespage.search("[@class~='playlist-landing']").search("[@class~='yt-uix-tile-link']")
       i=1
       episodelinks.each do |es|
         puts '  '+i.to_s+': '+es.inner_text.strip
