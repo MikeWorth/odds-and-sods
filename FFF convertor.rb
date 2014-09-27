@@ -1,5 +1,6 @@
 #This takes a measurement and converts it to the FFF unit system
 
+require_relative 'unit_definitions.rb'
 
 def nonFFFUnits(unitsString)
   for unit in unitsString.split(' ')
@@ -30,20 +31,10 @@ class Float
   end
 end
 
-  
-#TODO: split this out into a separate file
-units=Hash.new
-
-units['mph']={:name=>'Miles Per Hour',:value=>0.447, :inUnits=>'m s^-1'}
-units['Hz']={:name=>'Hertz',:value=>1, :inUnits=>'s^-1'}
-units['s']={:name=>'Seconds',:value=>8.267e-7, :inUnits=>'ftn'}
-units['m']={:name=>'metre', :value=>0.004971, :inUnits=>'fur'}
-units['fur']={:name=>'furlong'}
-units['fir']={:name=>'firkin mass'}#TODO: do I use firm to leave fir free for volume?
-units['ftn']={:name=>'fortnight'}
-
 puts 'Input value:'#TODO explain formatting
 originalInput=gets.chomp
+
+#TODO: echo back our interpretation of units
 
 runningValue,unitsString = originalInput.split(' ',2)
 
@@ -51,15 +42,22 @@ runningValue=runningValue.to_f#TODO: this is a bodge to fix up some weird intege
 
 while nonFFFUnits(unitsString)
 
+
+
   workingSection,unitsString=unitsString.split(' ',2)
-#  puts"ws: #{workingSection}"
-  unit,power=workingSection.split('^')
+
+  unit,power=workingSection.split('^') #TODO: cope with si prefixes
   power=1 if power==nil
 
-  runningValue*= units[unit][:value].to_f ** power.to_f
+  if ['fur','fir','ftn'].include?(unit) #skip iterations that already contain base units
+    unitsString+= " #{unit}^#{power}"
+    next
+  end
+
+  runningValue*= $units[unit][:value].to_f ** power.to_f
 
   unitsString='' if unitsString.nil?
-  unitsString+= ' '+ multiplyAllUnits(units[unit][:inUnits],power)
+  unitsString+= ' '+ multiplyAllUnits($units[unit][:inUnits],power)
 
   puts "= #{runningValue.to_s} #{unitsString}"
 
@@ -71,7 +69,8 @@ firkinsPower=0
 fortnightsPower=0
 for unitTerm in unitsString.split(' ')
   unit,power=unitTerm.split('^')
-
+  power=1 if power==nil
+  
   power=power.to_f#TODO: why doesnt duck typing sort this?
 
   furlongsPower += power if unit=='fur'
@@ -82,7 +81,7 @@ end
 unitsString = ''
 
 furlongsPower=furlongsPower.to_i if furlongsPower==furlongsPower.to_i#gets rid of horrible ".0"s on the end of integer powers TODO: do this in a less crude way
-unitsString+='fur' unless furlongsPower==0
+unitsString+=' fur' unless furlongsPower==0
 unitsString+="^#{furlongsPower}" unless [0,1].include?(furlongsPower)
 
 firkinsPower=firkinsPower.to_i if firkinsPower==firkinsPower.to_i#gets rid of horrible ".0"s on the end of integer powers TODO: do this in a less crude way
@@ -93,5 +92,5 @@ fortnightsPower=fortnightsPower.to_i if fortnightsPower==fortnightsPower.to_i#ge
 unitsString+=' ftn' unless fortnightsPower==0
 unitsString+="^#{fortnightsPower}" unless [0,1].include?(fortnightsPower)
 
-puts "#{originalInput} converted to #{runningValue.sigfigs(3).to_s} #{unitsString}"
+puts "#{originalInput} converted to #{runningValue.sigfigs(3).to_s}#{unitsString}"
 
