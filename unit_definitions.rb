@@ -51,7 +51,7 @@ $units['h']={:name=>'hour',:value=>60, :inUnits=>'min'}
 $units['min']={:name=>'minute',:value=>60, :inUnits=>'s'}
 
 #SI Derived
-$units['W']={:name=>'Watt',:value=>1, :inUnits=>'J s'}
+$units['W']={:name=>'Watt',:value=>1, :inUnits=>'J s^-1'}
 $units['J']={:name=>'Joule',:value=>1, :inUnits=>'N m'}
 $units['Pa']={:name=>'Pascal',:value=>1, :inUnits=>'N m^-2'}
 $units['N']={:name=>'Newton',:value=>1, :inUnits=>'kg m s^-2'}
@@ -67,5 +67,6 @@ $units['fur']={:name=>'furlong'}
 $units['fir']={:name=>'firkin mass'}#TODO: do I use firm to leave fir free for volume?
 $units['ftn']={:name=>'fortnight'}
 
+$baseUnits=['fir','fur','ftn']
 
 puts "unit definitions loaded"
