@@ -4,7 +4,7 @@ require_relative 'unit_definitions.rb'
 
 def nonFFFUnits(unitsString)
   for unit in unitsString.split(' ')
-    if ['fur','fir','ftn'].include?(unit.split('^')[0])==false
+    if $baseUnits.include?(unit.split('^')[0])==false
 #    puts"nonFFF:#{unit.split('^')[0]}"
       return true #we've found a non FFF unit
     end
@@ -34,9 +34,17 @@ end
 puts 'Input value:'#TODO explain formatting
 originalInput=gets.chomp
 
-#TODO: echo back our interpretation of units
-
 runningValue,unitsString = originalInput.split(' ',2)
+
+#echo back our interpretation of units
+inputInterpretation = runningValue.to_s
+for workingSection in unitsString.split(' ')
+  unit,power=workingSection.split('^') #TODO: cope with si prefixes
+  power=1 if power==nil
+
+  inputInterpretation+= " #{$units[unit][:name]}^#{power}"
+end
+puts "Input interpreted as: #{inputInterpretation}"
 
 runningValue=runningValue.to_f#TODO: this is a bodge to fix up some weird integer multiplication issues
 
@@ -49,7 +57,7 @@ while nonFFFUnits(unitsString)
   unit,power=workingSection.split('^') #TODO: cope with si prefixes
   power=1 if power==nil
 
-  if ['fur','fir','ftn'].include?(unit) #skip iterations that already contain base units
+  if $baseUnits.include?(unit) #skip iterations that already contain base units
     unitsString+= " #{unit}^#{power}"
     next
   end
@@ -74,7 +82,7 @@ for unitTerm in unitsString.split(' ')
   power=power.to_f#TODO: why doesnt duck typing sort this?
 
   furlongsPower += power if unit=='fur'
-  firkinsPower += power if unit=='fir'
+  firkinsPower += power if unit=='fir.mass'
   fortnightsPower += power if unit=='ftn'
 end
 
@@ -85,7 +93,7 @@ unitsString+=' fur' unless furlongsPower==0
 unitsString+="^#{furlongsPower}" unless [0,1].include?(furlongsPower)
 
 firkinsPower=firkinsPower.to_i if firkinsPower==firkinsPower.to_i#gets rid of horrible ".0"s on the end of integer powers TODO: do this in a less crude way
-unitsString+=' fir' unless firkinsPower==0
+unitsString+=' fir.mass' unless firkinsPower==0
 unitsString+="^#{firkinsPower}" unless [0,1].include?(firkinsPower)
 
 fortnightsPower=fortnightsPower.to_i if fortnightsPower==fortnightsPower.to_i#gets rid of horrible ".0"s on the end of integer powers TODO: do this in a less crude way

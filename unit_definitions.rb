@@ -58,15 +58,15 @@ $units['N']={:name=>'Newton',:value=>1, :inUnits=>'kg m s^-2'}
 $units['Hz']={:name=>'Hertz',:value=>1, :inUnits=>'s^-1'}
 
 #SI base
-$units['kg']={:name=>'kilogram',:value=>245e-4, :inUnits=>'fir'}
+$units['kg']={:name=>'kilogram',:value=>245e-4, :inUnits=>'fir.mass'}
 $units['s']={:name=>'Seconds',:value=>8.267e-7, :inUnits=>'ftn'}
 $units['m']={:name=>'metre', :value=>0.004971, :inUnits=>'fur'}
 
 #FFF base
 $units['fur']={:name=>'furlong'}
-$units['fir']={:name=>'firkin mass'}#TODO: do I use firm to leave fir free for volume?
+$units['fir.mass']={:name=>'firkin mass'}
 $units['ftn']={:name=>'fortnight'}
 
-$baseUnits=['fir','fur','ftn']
+$baseUnits=['fir.mass','fur','ftn']
 
 puts "unit definitions loaded"
