@@ -5,7 +5,6 @@ require_relative 'unit_definitions.rb'
 def nonFFFUnits(unitsString)
   for unit in unitsString.split(' ')
     if $baseUnits.include?(unit.split('^')[0])==false
-#    puts"nonFFF:#{unit.split('^')[0]}"
       return true #we've found a non FFF unit
     end
   end
